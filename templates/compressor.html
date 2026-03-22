@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Image Compressor - ProAI Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .navbar { box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .tool-card { border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background: white; padding: 30px; }
+        .ad-placeholder { background-color: #e9ecef; border: 2px dashed #adb5bd; border-radius: 8px; text-align: center; padding: 20px; color: #6c757d; margin-bottom: 20px; }
+        .article-section { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 30px; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: #e9ecef; height: 8px; border-radius: 5px; outline: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; background: #ffc107; border-radius: 50%; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="/"><i class="fa-solid fa-wand-magic-sparkles"></i> ProAI Tools</a>
+            <ul class="navbar-nav ms-auto flex-row gap-3">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#guide">Guide</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="ad-placeholder"><i class="fa-solid fa-ad fa-2x mb-2"></i><br><span>Top Ad Banner (728x90)</span></div>
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Tool Section -->
+                <div class="tool-card text-center">
+                    <h2 class="mb-3 text-warning"><i class="fa-solid fa-compress"></i> Smart Image Compressor</h2>
+                    <p class="text-muted mb-4">Reduce file size while keeping pixels sharp using advanced WebP encoding.</p>
+                    
+                    <form id="compressForm" onsubmit="processCompress(event)">
+                        <input type="file" id="fileInput" class="form-control form-control-lg mb-4" accept="image/*" required onchange="handleUpload(event)">
+                        
+                        <div class="d-flex justify-content-between mb-2 px-2">
+                            <span class="fw-bold">Original Size: <span id="origSize" class="text-danger">0 KB</span></span>
+                            <span class="fw-bold">Est. New Size: <span id="estSize" class="text-success">0 KB</span></span>
+                        </div>
+
+                        <label class="fw-bold mb-2 mt-3">Select Compression Level</label>
+                        <input type="range" id="qualitySlider" min="10" max="100" value="60" class="form-range mb-2" oninput="updateEst()">
+                        <p class="text-muted mb-4">Quality: <span id="q-val" class="fw-bold text-primary fs-5">60</span>% <br><small>(Tip: 60-80% reduces size massively without pixelating)</small></p>
+                        
+                        <button type="submit" id="action-btn" class="btn btn-warning btn-lg w-100 fw-bold"><i class="fa-solid fa-file-zipper"></i> Compress Image</button>
+                    </form>
+
+                    <!-- Result Section -->
+                    <div id="result-box" class="mt-4 p-4 border rounded bg-light shadow-sm" style="display:none;">
+                        <h4 class="text-success fw-bold"><i class="fa-solid fa-check"></i> Compression Done!</h4>
+                        <div class="row mt-3 mb-3">
+                            <div class="col-6 border-end">
+                                <p class="text-muted mb-0">Reduced by</p>
+                                <h3 class="text-danger fw-bold" id="percentReduced">0%</h3>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted mb-0">New Size</p>
+                                <h3 class="text-success fw-bold" id="finalSize">0 KB</h3>
+                            </div>
+                        </div>
+                        <a id="download-btn" href="#" download="smart_compressed.webp" class="btn btn-success btn-lg w-100"><i class="fa-solid fa-download"></i> Save Compressed Image</a>
+                    </div>
+                </div>
+
+                <!-- Guide & FAQ -->
+                <div class="article-section" id="guide">
+                    <h3 class="mb-3">Will reducing size ruin the quality?</h3>
+                    <p>No! Traditional tools use JPEG which pixelates images. We use <b>Smart WebP Compression</b>. This means even at 60% quality, the file size drops dramatically but the pixels remain sharp and clear to the human eye.</p>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white fw-bold">Discover More Tools</div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item py-3"><a href="/" class="text-decoration-none text-dark d-flex align-items-center"><i class="fa-solid fa-image fa-fw text-success me-3 fs-5"></i> <span class="fw-medium">BG Remover & Thumbnails</span></a></li>
+                        <li class="list-group-item py-3"><a href="/upscaler" class="text-decoration-none text-dark d-flex align-items-center"><i class="fa-solid fa-expand fa-fw text-primary me-3 fs-5"></i> <span class="fw-medium">Image Upscaler</span></a></li>
+                        <li class="list-group-item py-3"><a href="/video" class="text-decoration-none text-dark d-flex align-items-center"><i class="fa-solid fa-video fa-fw text-danger me-3 fs-5"></i> <span class="fw-medium">Video Downloader</span></a></li>
+                        <li class="list-group-item py-3"><a href="/audio" class="text-decoration-none text-dark d-flex align-items-center"><i class="fa-solid fa-music fa-fw text-info me-3 fs-5"></i> <span class="fw-medium">Audio Extractor</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let originalBytes = 0;
+        function handleUpload(e) {
+            originalBytes = e.target.files[0].size;
+            document.getElementById('origSize').innerText = (originalBytes / 1024).toFixed(2) + ' KB';
+            updateEst();
+        }
+        function updateEst() {
+            let q = document.getElementById('qualitySlider').value;
+            document.getElementById('q-val').innerText = q;
+            // WebP estimation formula (Very efficient)
+            let estBytes = originalBytes * (q / 100) * 0.5; 
+            document.getElementById('estSize').innerText = (estBytes / 1024).toFixed(2) + ' KB';
+        }
+        async function processCompress(e) {
+            e.preventDefault();
+            let fileInput = document.getElementById('fileInput').files[0];
+            let q = document.getElementById('qualitySlider').value;
+            
+            let btn = document.getElementById('action-btn');
+            let origTxt = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Compressing...';
+            btn.disabled = true;
+
+            let formData = new FormData();
+            formData.append('file', fileInput);
+            formData.append('quality', q);
+
+            try {
+                let res = await fetch('/compress-image', { method: 'POST', body: formData });
+                let blob = await res.blob();
+                
+                let newBytes = blob.size;
+                let percent = ((originalBytes - newBytes) / originalBytes) * 100;
+                if (percent < 0) percent = 0; // Agar image already compressed ho
+
+                document.getElementById('finalSize').innerText = (newBytes / 1024).toFixed(2) + ' KB';
+                document.getElementById('percentReduced').innerText = percent.toFixed(1) + '%';
+                
+                let url = URL.createObjectURL(blob);
+                document.getElementById('download-btn').href = url;
+                document.getElementById('result-box').style.display = 'block';
+            } catch (err) {
+                alert('Error compressing image.');
+            } finally {
+                btn.innerHTML = origTxt;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
