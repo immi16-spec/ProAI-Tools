@@ -1,42 +1,41 @@
-from fastapi import FastAPI, UploadFile, File, Request, Form
-from fastapi.responses import HTMLResponse, StreamingResponse, Response, FileResponse
-from fastapi.templating import Jinja2Templates
+import streamlit as st
+import requests
+from PIL import Image
 from rembg import remove
 from io import BytesIO
-from PIL import Image
-import requests
 import yt_dlp
-import os
 
-app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+st.set_page_config(layout="wide")
+st.title("ProAI Tools")
 
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request): return templates.TemplateResponse("index.html", {"request": request})
+tab1, tab2, tab3, tab4 = st.tabs(["Thumbnail Downloader", "BG Remover", "Video Downloader", "Image Compressor"])
 
-@app.get("/upscaler", response_class=HTMLResponse)
-async def upscaler_page(request: Request): return templates.TemplateResponse("upscaler.html", {"request": request})
+with tab1:
+    url = st.text_input("Enter YouTube URL")
+    if st.button("Get Thumbnails"):
+        vid = url.split("v=")[-1].split("&")[0]
+        st.image(f"https://img.youtube.com/vi/{vid}/maxresdefault.jpg")
 
-@app.get("/download-thumb")
-async def download_thumb(url: str):
-    res = requests.get(url)
-    return Response(content=res.content, media_type="image/jpeg")
+with tab2:
+    file = st.file_uploader("Upload Image", type=['png', 'jpg'])
+    if file:
+        input_image = file.read()
+        output = remove(input_image)
+        st.image(output)
+        st.download_button("Download", output, "bg_removed.png")
 
-@app.post("/remove-bg")
-async def remove_bg(file: UploadFile = File(...)):
-    input_image = await file.read()
-    output_image = remove(input_image)
-    return StreamingResponse(BytesIO(output_image), media_type="image/png")
+with tab3:
+    v_url = st.text_input("Paste Video URL")
+    if st.button("Download Video"):
+        ydl_opts = {'outtmpl': 'video.mp4'}
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl: ydl.download([v_url])
+        with open("video.mp4", "rb") as f:
+            st.download_button("Save Video", f, "video.mp4")
 
-@app.post("/upscale-image")
-async def upscale_img(file: UploadFile = File(...), scale: int = Form(2)):
-    input_image = await file.read()
-    img = Image.open(BytesIO(input_image))
-    if scale > 8: scale = 8
-    new_size = (int(img.width * scale), int(img.height * scale))
-    upscaled_img = img.resize(new_size, Image.Resampling.LANCZOS)
-    img_io = BytesIO()
-    save_format = img.format if img.format else "PNG"
-    upscaled_img.save(img_io, format=save_format)
-    img_io.seek(0)
-    return StreamingResponse(img_io, media_type=f"image/{save_format.lower()}")
+with tab4:
+    img_file = st.file_uploader("Upload for Compressor", type=['jpg', 'png'])
+    if img_file:
+        img = Image.open(img_file)
+        buf = BytesIO()
+        img.save(buf, format="WEBP", quality=50)
+        st.download_button("Download Compressed", buf.getvalue(), "image.webp")
