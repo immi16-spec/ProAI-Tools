@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+rembg
+pillow
+requests
+yt-dlp
+python-multipart
+jinja2
+python-dateutil
