@@ -1,3 +1,7 @@
 streamlit
-rembg
+rembg[cpu]
 onnxruntime
+pillow
+requests
+yt-dlp
+python-multipart
