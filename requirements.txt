@@ -5,4 +5,3 @@ pillow
 requests
 yt-dlp
 python-multipart
-jinja2
