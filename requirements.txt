@@ -1,5 +1,8 @@
 streamlit
-rembg
+rembg[cpu]
+onnxruntime
 pillow
-yt-dlp
 requests
+yt-dlp
+python-multipart
+jinja2
